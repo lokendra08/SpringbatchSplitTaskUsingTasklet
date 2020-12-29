@@ -1,5 +1,6 @@
 package com.batch.demo.listeners;
 
+import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 

@@ -1,6 +1,8 @@
 package com.batch.demo.controller;
 
+import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersInvalidException;
@@ -24,18 +26,28 @@ public class BatchController {
     private Job job;
     
     @RequestMapping(value="/jobone", method= {RequestMethod.GET}, produces={MediaType.APPLICATION_JSON_VALUE})
-	public void runJob1(){
+	public boolean runJob1(){
+    	boolean result= false;
     	JobParameters params = new JobParametersBuilder()
                 .addString("JobID", String.valueOf(System.currentTimeMillis()))
                 .toJobParameters();
         try {
-			jobLauncher.run(job, params);
+        	    final JobExecution execution = jobLauncher.run(job, params);
+        	    final ExitStatus status = execution.getExitStatus();
+                System.out.println("final step status : "+status);
+        	    if (ExitStatus.COMPLETED.getExitCode().equals(status.getExitCode())) {
+        	        result = true;
+        	    }
 		} catch (JobExecutionAlreadyRunningException 
 				 | JobRestartException 
 				 | JobInstanceAlreadyCompleteException
 				 | JobParametersInvalidException e) {
 			e.printStackTrace();
 		}
+        
+        return result;
 	}
 
 }
+
+
